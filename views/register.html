@@ -1,0 +1,22 @@
+<html>
+
+
+<body>
+<h1>Register</h1>
+    <form action="/register" method = "POST">
+        Name: <input type= "text" name = "name"><br>
+        E-mail: <input type = "text" name = "email"><br>
+        Username: <input type = "text" name = "username"><br>
+        Password: <input type = "password" name = "password"><br>
+        <button type = "submit" name="register" value="rg">Register</button>
+        <button type = "submit" name="back" value="bk">Back</button>
+        {{# errors}}
+	    <div class="alert-danger p-2 mb-2">
+		{{msg}}
+	   	</div>
+		{{/errors}}
+    </form>
+</body>
+
+
+</html>

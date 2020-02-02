@@ -1,0 +1,74 @@
+<html>
+
+<body>
+<ul>
+    <li><a href="/logout">Log Out</a></li>
+</ul>
+<h1>Lobby<h1>
+<table>
+    <thead>
+        <tr>
+            <th>Roooms</th>
+            <th>Online</th>
+            <th>Join</th>
+        </tr>
+    </thead>
+    <tbody id="roomList">
+        
+    </tbody>
+</table>
+<form action="/room">
+    <input type="hidden" name="username" value={{user.username}} />
+    <input type="hidden" name="roomname" value={{user.username}}'s />
+    <input type="submit" class="btn btn-primary btn-lg" value="Create Room"/>
+</form>
+
+<input type="hidden" id="login" value={{user.username}} />
+<ul id="onlineList">
+
+</ul>
+
+<script>
+    $(function(){
+        //joined lobby connect to socket
+        var socket = io.connect();
+        var user = $('#login').val();
+        socket.on('connect',function()
+        {
+            socket.emit('join_lobby',user);
+        })
+        socket.on('updateLobby',function(user,room)
+        {
+            $('#onlineList').empty();
+            $('#roomList').empty();
+            for(var keys in room)
+            {
+                if(keys!='lobby')
+                {
+                    $('#roomList').append('<tr><th>'+keys+' room</th><th>'+room[keys].online+'</th><th><form action="/room"><input type=hidden name=username value={{user.username}} /><input type=hidden name=roomname value='+keys+' /><button id= join value='+keys+'>Join</button></form></th></tr>')
+                }
+                else{
+                    for(var username in room[keys])
+                    {
+                        $('#onlineList').append('<li>'+room[keys][username]+'</li>');
+                    }
+                }
+            }        
+            $('#join').click(function(){
+                var join_room = $(this).val();
+                socket.emit('join_room',join_room,user);
+            })
+        })
+        //when create room button clicked 
+        $('form').submit(function(){
+            var creator=$('#login').val()+"'s";
+            socket.emit('createRoom',creator,user);
+        })
+
+
+    })
+</script>
+
+
+</body>
+</html>
